@@ -1,0 +1,10 @@
+# mode: crash
+# 一个 probe 一个切点：标在提交过的截断之后，验证它必须存活
+@pre
+create_file, f, 0101, 0644
+@seq
+write_file, f, 0101, 0, 4096
+fsync, f
+truncate, f, 512
+fsync, f
+@cut after-truncate

@@ -1,0 +1,9 @@
+# mode: crash
+# 覆盖写后 fsync：@cut 标在 fsync 之后，数据与长度都必须存活
+@pre
+mkdir, d-00, 0755
+create_file, d-00/f-00, 0101, 0644
+@seq
+write_file, d-00/f-00, 0101, 0, 512
+fsync, d-00/f-00
+@cut after-fsync

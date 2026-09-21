@@ -1,0 +1,8 @@
+# mode: crash
+# 只做 fdatasync：数据承诺、长度不承诺，崩溃后长度允许停在旧值
+@pre
+create_file, f, 0101, 0644
+@seq
+write_file, f, 0101, 0, 16
+fdatasync, f
+@cut after-fdatasync
