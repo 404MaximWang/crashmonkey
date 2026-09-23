@@ -1,0 +1,15 @@
+{
+  "driver": "3fs",
+  "native_rdma": true,
+  "binary_dir": "/path/to/3fs/build/bin",
+  "lib_dirs": ["/path/to/libfuse3/prefix/lib"],
+  "test_dir": "/mnt/ssd/3fs-cm/test",
+  "reference_etc": "/path/to/deploy/etc",
+  "num_storage": 3,
+  "rf": 3,
+  "port_offset": 4000,
+  "cluster_id": "cmtest",
+  "chunk_size_list": ["512KB"],
+  "fdbserver": "/path/to/deploy/fdb/usr/sbin/fdbserver",
+  "fdbcli": "/path/to/deploy/fdb/usr/bin/fdbcli"
+}

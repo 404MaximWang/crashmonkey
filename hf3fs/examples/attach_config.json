@@ -1,0 +1,7 @@
+{
+  "driver": "attach",
+  "launcher": "/path/to/deploy/etc/hf3fs_fuse_main_launcher.toml",
+  "binary": "/path/to/3fs/build/bin/hf3fs_fuse_main",
+  "subdir": "work/cmharness",
+  "log_dir": "/path/to/harness/logs"
+}
