@@ -109,9 +109,9 @@ class MockSubject:
 
 # ---------------------------------------------------------------------------
 # Real subject (attach mode): a live 3FS deployment driven through our own
-# FUSE client. Client kill class only - killing the deployment's storage or
-# cluster daemons is a separate experiment with its own approval
-# (crashqa.md section 5).
+# FUSE client. All three kill classes: client (our FUSE client), storage
+# (one storage daemon, plan6), cluster (every daemon of the deployment
+# including its private FDB, plan7).
 
 
 class ProbeExecutor:
@@ -288,20 +288,29 @@ class AttachCrashSubject:
     recorded length from FoundationDB and the bytes from storage, which is
     exactly the durable state.
 
+    The storage kill class SIGKILLs one storage daemon first and then our
+    client: with both writers gone the durable state is frozen while the
+    daemon restarts, and the observation above happens through the client
+    that comes up after every target is SERVING again. The cluster kill
+    class is the same shape with every daemon of the deployment down and
+    brought back in dependency order (FDB, mgmtd, meta, storage).
+
     The executor process (us) is never killed and never closes its probe
     fds: a closing writer would send FUSE FLUSH, a full fsync. The stale
     fds reference the killed client's mount and die with the process.
     """
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, kill="client"):
         # lazy import: mock-only runs never load the driver stack
         sys.path.insert(0, os.path.dirname(os.path.dirname(
             os.path.abspath(__file__))))
         import driver as D
+        if kill not in D.KILL_CLASSES:
+            raise ValueError("unknown kill class %r" % kill)
         cfg = dict(cfg)
         cfg["subdir"] = cfg.get("crash_subdir", "work/cmcrash")
         self._driver = D.AttachDriver(cfg)
-        self._kill = D.KILL_CLIENT
+        self._kill = kill
 
     def run(self, probe, points):
         d = self._driver

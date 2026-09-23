@@ -267,14 +267,9 @@ def main():
     if live:
         if not args.config:
             raise SystemExit("--subject attach needs --config CFG.json")
-        if args.kill != "client":
-            raise SystemExit(
-                "the attach subject supports only the client kill class; "
-                "storage and cluster kills drive the deployment's own "
-                "daemons and need their own approval (crashqa.md section 5)")
         from subject import AttachCrashSubject
         with open(args.config) as f:
-            subject = AttachCrashSubject(json.load(f))
+            subject = AttachCrashSubject(json.load(f), args.kill)
         _take_gate_lock()
         _arm_restore_traps(subject)
     else:
